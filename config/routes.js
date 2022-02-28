@@ -6,6 +6,8 @@ const { authenticationUser } = require('../app/middlewares/authentication');
 
 router.post('/api/register', userController.register);
 router.post('/api/login', userController.login);
-router.get('/api/profile/:id', authenticationUser, userController.profile )
+router.get('/api/profile', authenticationUser, userController.profile)
+router.post('/api/createprofile', authenticationUser, userController.createProfile);
+router.put('/api/updateprofile', authenticationUser, userController.updateProfile);
 
 module.exports = router;

@@ -13,7 +13,7 @@ const userDetailsSchema = new Schema({
     dateOfBirth: {
         type: Date,
         default: Date.now(),
-        required: [true, 'date of birth should be mandatory']
+        // required: [true, 'date of birth should be mandatory']
     },
     gender: {
         type: String,

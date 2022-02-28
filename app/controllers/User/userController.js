@@ -67,20 +67,43 @@ userController.login = (req, res) => {
 userController.profile = (req, res) => {
 
     const userId = req.user._id.toString()
-    const id = req.params.id;
 
     UserDetails.findOne({ userId: userId })
         .then((user) => {
-            if (id === userId) {
-                if (user) {
-                     res.json({
-                        _id : userId
-                    })
-                } else {
-                    res.json({ "message": "profile not added"})
-                }
+            if (user) {
+                res.json(user)
             } else {
-                 res.status(403).json({ "message": "userId invalid"})
+                res.json({ "message": "profile not added" })
+            }
+
+        })
+        .catch((err) => {
+            res.json(err.message)
+        })
+};
+
+userController.createProfile = (req, res, next) => {
+    const body = req.body;
+    const id = req.user._id.toString();
+
+    UserDetails.findOne({ userId: id })
+        .then((user) => {
+            if (user) {
+                res.json({
+                    message: "user already created",
+                    data: user
+                });
+            } else {
+                const userDetails = new UserDetails(body);
+                userDetails.userId = id;
+                
+                userDetails.save()
+                    .then((userData) => {
+                        res.status(201).json(userData);
+                    })
+                    .catch((err) => {
+                        res.json(err.message)
+                    })
             }
         })
         .catch((err) => {
@@ -88,5 +111,24 @@ userController.profile = (req, res) => {
         })
 }
 
+userController.updateProfile = (req, res, next) => {
+    const body = req.body;
+    const userId = req.user._id.toString();
+
+    UserDetails.findOne({ userId: userId })
+        .then((user) => {
+            const id = user._id
+            // res.json(user);
+            UserDetails.findByIdAndUpdate(id, body, { new: true, runValidators: true})
+                .then((user) => {
+                    res.json(user)
+                })
+                .catch((err) => {
+                    res.json(err.message)
+                })
+        })
+        .catch((err) => res.json(err.message))
+
+}
 
 module.exports  = userController
